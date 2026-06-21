@@ -37,12 +37,12 @@ export default function Home() {
             <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[12px] font-semibold text-accent">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Zero-markup live rates
             </span>
-            <h1 className="mt-5 font-display text-5xl font-extrabold leading-[1.03] tracking-tight text-white md:text-6xl">
+            <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
               India&apos;s Smarter Way to <span className="text-accent">Exchange Currency</span>
             </h1>
 
             {/* Google rating badge. When ready, link this to your Google Business Profile reviews. */}
-            <div className="mt-5 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2">
+            <div className="mt-5 inline-flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-2xl border border-white/15 bg-white/[0.06] px-4 py-2">
               <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
                 <path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z" />
                 <path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z" />
