@@ -1,7 +1,16 @@
 import ForexWidget from "@/components/ForexWidget";
+import FloatingContact from "@/components/FloatingContact";
 import Link from "next/link";
 import { getAllPosts } from "@/lib/blog";
 import { site } from "@/lib/site";
+
+function Ic({ d }: { d: string }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00b85e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={d} />
+    </svg>
+  );
+}
 
 export default function Home() {
   const posts = getAllPosts().slice(0, 3);
@@ -14,27 +23,22 @@ export default function Home() {
         className="relative overflow-hidden bg-deep"
         style={{
           backgroundImage:
-            "radial-gradient(120% 90% at 15% 0%, #00341B 0%, #07100a 60%)",
+            "radial-gradient(115% 95% at 78% 8%, #0b3d27 0%, #00341B 38%, #05180e 100%)",
         }}
       >
-        {/* faint grid texture */}
+        {/* soft accent glow behind the card */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#02e375 1px,transparent 1px),linear-gradient(90deg,#02e375 1px,transparent 1px)",
-            backgroundSize: "44px 44px",
-          }}
+          className="pointer-events-none absolute right-[6%] top-[16%] h-[440px] w-[440px] rounded-full"
+          style={{ background: "rgba(2,227,117,.16)", filter: "blur(120px)" }}
         />
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 md:grid-cols-2 md:py-24">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[12px] font-semibold text-accent">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Zero-markup live rates
             </span>
-            <h1 className="mt-5 font-display text-5xl font-extrabold leading-[0.95] tracking-tight text-white md:text-7xl">
-              Send Money<br />Abroad Quick<br />
-              <span className="text-accent">& Securely</span>
+            <h1 className="mt-5 font-display text-5xl font-extrabold leading-[0.98] tracking-tight text-white md:text-7xl">
+              Send money<br />abroad, <span className="text-accent">quick<br />&amp; secure.</span>
             </h1>
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-g2">
               Buy, sell, and remit foreign currency at transparent, bank-beating
@@ -62,11 +66,11 @@ export default function Home() {
 
       {/* TRUST STRIP */}
       <section className="border-b border-g2 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-5 py-6 text-[13px] font-semibold text-g5">
-          <span>🔒 100% RBI-compliant</span>
-          <span>⚡ Same-day delivery</span>
-          <span>💳 Forex cards in 28+ currencies</span>
-          <span>📞 No spam calls — ever</span>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-9 gap-y-3 px-5 py-6 text-[13px] font-semibold text-g5">
+          <span className="inline-flex items-center gap-2"><Ic d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5l-8-3Z" /> 100% RBI-compliant</span>
+          <span className="inline-flex items-center gap-2"><Ic d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" /> Same-day delivery</span>
+          <span className="inline-flex items-center gap-2"><Ic d="M3 7h18M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l2-3h14l2 3M7 13h4" /> Forex cards in 28+ currencies</span>
+          <span className="inline-flex items-center gap-2"><Ic d="M5 3h3l2 5-2.5 1.5a11 11 0 0 0 5 5L16 14l5 2v3a2 2 0 0 1-2 2A18 18 0 0 1 3 5a2 2 0 0 1 2-2Z" /> No spam calls — ever</span>
         </div>
       </section>
 
@@ -78,12 +82,14 @@ export default function Home() {
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {[
-            { t: "Buy Forex", d: "Cash and forex cards in 28+ currencies, delivered to your door at live rates.", icon: "💵" },
-            { t: "Send Money Abroad", d: "Outward remittance for education, family maintenance, travel and more — fully documented.", icon: "🌍" },
-            { t: "Sell Forex", d: "Returning from a trip? Sell your leftover currency at fair, transparent buy-back rates.", icon: "🔁" },
+            { t: "Buy Forex", d: "Cash and forex cards in 28+ currencies, delivered to your door at live rates.", path: "M2.5 6h19a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-19a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1ZM2 9.5h20M6 14h4" },
+            { t: "Send Money Abroad", d: "Outward remittance for education, family maintenance, travel and more — fully documented.", path: "M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19ZM2.5 12h19M12 2.5c2.5 2.7 3.8 6 3.8 9.5S14.5 18.8 12 21.5C9.5 18.8 8.2 15.5 8.2 12S9.5 5.2 12 2.5Z" },
+            { t: "Sell Forex", d: "Returning from a trip? Sell your leftover currency at fair, transparent buy-back rates.", path: "M4 9h13l-3-3M20 15H7l3 3" },
           ].map((s) => (
-            <div key={s.t} className="rounded-2xl border border-g2 bg-g1 p-7 transition hover:border-accent hover:shadow-card">
-              <div className="mb-4 grid h-12 w-12 place-items-center rounded-xl bg-accent/15 text-2xl">{s.icon}</div>
+            <div key={s.t} className="rounded-2xl border border-g2 bg-white p-7 transition hover:-translate-y-1 hover:border-accent hover:shadow-card">
+              <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl bg-mint">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00341B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={s.path} /></svg>
+              </div>
               <h3 className="font-display text-xl font-bold text-ink">{s.t}</h3>
               <p className="mt-2 text-[14px] leading-relaxed text-g5">{s.d}</p>
             </div>
@@ -146,6 +152,8 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      <FloatingContact />
     </>
   );
 }

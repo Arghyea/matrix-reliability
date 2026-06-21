@@ -5,10 +5,10 @@ export const site = {
   domain: "matrixforex.in",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://matrixforex.in",
   tagline: "Buy, sell & send forex at zero-markup rates.",
-  // ↓↓↓ Fill these with your real details — they render in the header/footer.
-  phone: "+91 98765 43210",
-  phoneHref: "tel:+919876543210",
-  whatsapp: "919876543210", // digits only, for wa.me links
+  // Contact details — used by the footer and the floating Call/WhatsApp buttons.
+  phone: "+91 98765 43210",          // shown text (call button)
+  phoneHref: "tel:+919876543210",     // Call → 9876543210
+  whatsapp: "917428833412",           // WhatsApp → 7428833412 (with 91 country code for wa.me)
   email: "info@matrixforex.in",
   address: "Gurugram, Haryana, India",
   rbiLine: "RBI-Authorised Dealer Category-II · Licence No. <add here>",
@@ -20,9 +20,5 @@ export const site = {
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ],
-  social: {
-    facebook: "",
-    instagram: "",
-    linkedin: "",
-  },
+  social: { facebook: "", instagram: "", linkedin: "" },
 };
