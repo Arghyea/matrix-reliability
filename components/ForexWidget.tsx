@@ -7,6 +7,17 @@ import {
 } from "@/lib/currencies";
 import { captureTracking, classifySource, type Tracking } from "@/lib/tracking";
 
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+      reset: (id?: string) => void;
+    };
+  }
+}
+
 type Mode = "buy" | "sell" | "send";
 const TABS: { mode: Mode; label: string }[] = [
   { mode: "buy", label: "Book Forex" },
@@ -33,6 +44,10 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
   const [service, setService] = useState("Card + Cash");
   const [consent, setConsent] = useState(false);
   const [company, setCompany] = useState(""); // honeypot
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const turnstileId = useRef<string | null>(null);
+  const [siteKey, setSiteKey] = useState<string>(TURNSTILE_SITE_KEY || "");
 
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -79,6 +94,40 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
     return () => { alive = false; clearInterval(id); };
   }, []);
 
+  // Get the Turnstile site key at runtime (works even if the env var is "Sensitive").
+  useEffect(() => {
+    if (siteKey) return;
+    fetch("/api/config")
+      .then((r) => r.json())
+      .then((d) => { if (d.turnstileSiteKey) setSiteKey(d.turnstileSiteKey); })
+      .catch(() => {});
+  }, [siteKey]);
+
+  // Cloudflare Turnstile — load script + render the widget once we have a site key.
+  useEffect(() => {
+    if (!siteKey) return;
+    const SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    const render = () => {
+      const ts = window.turnstile;
+      if (!ts || !turnstileRef.current || turnstileId.current) return;
+      turnstileId.current = ts.render(turnstileRef.current, {
+        sitekey: siteKey,
+        callback: (t: string) => setTurnstileToken(t),
+        "error-callback": () => setTurnstileToken(""),
+        "expired-callback": () => setTurnstileToken(""),
+      });
+    };
+    if (window.turnstile) { render(); return; }
+    let s = document.querySelector<HTMLScriptElement>(`script[src="${SRC}"]`);
+    if (!s) {
+      s = document.createElement("script");
+      s.src = SRC; s.async = true; s.defer = true;
+      document.head.appendChild(s);
+    }
+    s.addEventListener("load", render);
+    return () => { s?.removeEventListener("load", render); };
+  }, [siteKey]);
+
   const options = useMemo(() => {
     const have = ALLOWED.filter((c) => rates[c]);
     const pref = PREFERRED.filter((c) => rates[c]);
@@ -119,6 +168,7 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
       source: classifySource(tracking.current),
       tracking: tracking.current,
       company, // honeypot
+      turnstileToken,
     };
     try {
       const res = await fetch("/api/lead", {
@@ -132,10 +182,12 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
       } else {
         setStatus("error");
         setErrorMsg(data.error || "Something went wrong. Please try again.");
+        if (turnstileId.current) { window.turnstile?.reset(turnstileId.current); setTurnstileToken(""); }
       }
     } catch {
       setStatus("error");
       setErrorMsg("Network error. Please try again or call us.");
+      if (turnstileId.current) { window.turnstile?.reset(turnstileId.current); setTurnstileToken(""); }
     }
   }
 
@@ -319,6 +371,8 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
                 {errorMsg}
               </div>
             )}
+
+            {siteKey && <div ref={turnstileRef} className="flex justify-center" />}
 
             <button
               type="submit"
