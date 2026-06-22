@@ -9,17 +9,14 @@ export const site = {
   phone: "+91 95608 07781",          // shown text (call button)
   phoneHref: "tel:+919560807781",     // Call → 9560807781
   whatsapp: "917428833412",           // WhatsApp → 7428833412 (with 91 country code for wa.me)
-  email: "info@matrixforex.in",
+  email: "forex@matrixforex.in",
   address: "Gurugram, Haryana, India",
   rbiLine: "RBI-Authorised Dealer Category-II · Licence No. NDL-ADII-0023-2023",
   nav: [
-    { label: "Buy Forex", href: "/services" },
-    { label: "Send Money", href: "/services" },
-    { label: "Forex Card", href: "/services" },
-    { label: "Blog", href: "/blog" },
     { label: "Travel Guides", href: "/travel-guide" },
-    { label: "About", href: "/about" },
+    { label: "Blog", href: "/blog" },
     { label: "Locations", href: "/locations" },
+    { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ],
   social: { facebook: "", instagram: "", linkedin: "" },

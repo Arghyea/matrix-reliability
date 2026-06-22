@@ -54,7 +54,7 @@ async function isRateLimited(ip: string): Promise<boolean> {
 
 // ── Validation ──────────────────────────────────────────────────────────
 const LeadSchema = z.object({
-  formType: z.enum(["buy", "sell", "send"]),
+  formType: z.enum(["buy", "sell", "send", "card"]),
   name: z.string().min(2).max(80),
   phone: z.string().regex(/^\d{10}$/, "Phone must be 10 digits"),
   email: z.string().email().max(120),

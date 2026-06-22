@@ -1,4 +1,5 @@
 import ForexWidget from "@/components/ForexWidget";
+import ForexCard from "@/components/ForexCard";
 import FloatingContact from "@/components/FloatingContact";
 import FAQ from "@/components/FAQ";
 import Link from "next/link";
@@ -236,41 +237,7 @@ export default function Home() {
       </section>
 
       {/* FOREX CARD */}
-      <section className="overflow-hidden bg-ink py-20 text-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 md:grid-cols-2">
-          <div>
-            <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-accent">Zero markup card</span>
-            <h2 className="mt-2 font-display text-4xl font-extrabold leading-tight">The traveller&apos;s superpower card</h2>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-g3">
-              Stop paying 2–5% extra to banks on every foreign transaction. Load any currency and spend globally at live interbank rates with zero forex markup. Accepted in 180+ countries.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/#book" className="rounded-full bg-accent px-6 py-3 text-[14px] font-bold text-dark-green transition hover:-translate-y-0.5">Get card in 24 hrs →</Link>
-              <Link href="/services" className="rounded-full border border-white/20 px-6 py-3 text-[14px] font-bold text-white transition hover:border-accent">Learn more</Link>
-            </div>
-          </div>
-          <div className="flex justify-center md:justify-end">
-            <div className="relative aspect-[1.586/1] w-full max-w-[360px] rounded-2xl p-6 shadow-2xl" style={{ background: "linear-gradient(135deg, #00b85e 0%, #00341B 100%)" }}>
-              <div className="flex items-center justify-between">
-                <span className="font-display text-xl font-extrabold text-white">Matrix</span>
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-white/70">Forex Card</span>
-              </div>
-              <div className="mt-8 h-9 w-12 rounded-md bg-white/25" />
-              <div className="mt-5 font-mono text-lg tracking-widest text-white">•••• •••• •••• 4781</div>
-              <div className="mt-5 flex items-end justify-between text-white/85">
-                <div>
-                  <div className="text-[9px] uppercase tracking-widest text-white/55">Card holder</div>
-                  <div className="text-[13px] font-semibold">YOUR NAME</div>
-                </div>
-                <div>
-                  <div className="text-[9px] uppercase tracking-widest text-white/55">Expires</div>
-                  <div className="text-[13px] font-semibold">12/27</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ForexCard />
 
       {/* REVIEWS */}
       <section className="mx-auto max-w-6xl px-5 py-20">
