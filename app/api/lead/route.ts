@@ -3,8 +3,54 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 export const runtime = "nodejs";
+
+// ── Rate limiting ───────────────────────────────────────────────────────
+// Primary: Upstash Redis (persistent, shared across all instances).
+// Fallback: in-memory (local dev only). Fails OPEN on any Upstash error so a
+// rate-limit hiccup can never take the form down.
+const _url = process.env.UPSTASH_REDIS_REST_URL;
+const _token = process.env.UPSTASH_REDIS_REST_TOKEN;
+const ratelimit =
+  _url && _token
+    ? new Ratelimit({
+        redis: new Redis({ url: _url, token: _token }),
+        limiter: Ratelimit.slidingWindow(5, "10 m"),
+        prefix: "mxf:lead",
+        analytics: false,
+      })
+    : null;
+
+const MEM_WINDOW_MS = 60_000;
+const MEM_MAX = 8;
+const memHits = new Map<string, { count: number; reset: number }>();
+function memLimited(ip: string): boolean {
+  const now = Date.now();
+  const e = memHits.get(ip);
+  if (!e || now > e.reset) {
+    memHits.set(ip, { count: 1, reset: now + MEM_WINDOW_MS });
+    return false;
+  }
+  if (e.count >= MEM_MAX) return true;
+  e.count++;
+  return false;
+}
+
+async function isRateLimited(ip: string): Promise<boolean> {
+  if (ratelimit) {
+    try {
+      const { success } = await ratelimit.limit(ip);
+      return !success;
+    } catch (e) {
+      console.error("Upstash rate-limit error (failing open):", e);
+      return false;
+    }
+  }
+  return memLimited(ip);
+}
 
 // ── Validation ──────────────────────────────────────────────────────────
 const LeadSchema = z.object({
@@ -102,6 +148,13 @@ export async function POST(req: Request) {
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     req.headers.get("x-real-ip") ||
     "unknown";
+
+  if (await isRateLimited(ip)) {
+    return NextResponse.json(
+      { ok: false, error: "Too many requests. Please try again in a few minutes." },
+      { status: 429 }
+    );
+  }
 
   if (!(await verifyTurnstile(d.turnstileToken, ip))) {
     return NextResponse.json(

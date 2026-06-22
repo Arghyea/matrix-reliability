@@ -17,6 +17,7 @@ export const site = {
     { label: "Send Money", href: "/services" },
     { label: "Forex Card", href: "/services" },
     { label: "Blog", href: "/blog" },
+    { label: "Travel Guides", href: "/travel-guide" },
     { label: "About", href: "/about" },
     { label: "Locations", href: "/locations" },
     { label: "Contact", href: "/contact" },

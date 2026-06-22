@@ -112,6 +112,9 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
       if (!ts || !turnstileRef.current || turnstileId.current) return;
       turnstileId.current = ts.render(turnstileRef.current, {
         sitekey: siteKey,
+        appearance: "interaction-only",
+        theme: "light",
+        size: "flexible",
         callback: (t: string) => setTurnstileToken(t),
         "error-callback": () => setTurnstileToken(""),
         "expired-callback": () => setTurnstileToken(""),
