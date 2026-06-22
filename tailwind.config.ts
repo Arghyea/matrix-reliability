@@ -22,6 +22,12 @@ const config: Config = {
         g3: "#b8ccbf",
         g4: "#6a8c74",
         g5: "#304838",
+        // Soft editorial palette — used on the blog for a calmer, less harsh look
+        paper: "#f6f9f6",      // page background
+        sage: "#e7efe9",       // soft card border
+        leaf: "#0fa45f",       // muted emerald accent (calmer than neon)
+        "leaf-dark": "#0c7d46",
+        forest: "#173a25",     // soft deep-green for headings
       },
       fontFamily: {
         display: ["var(--font-aeonik)", "system-ui", "sans-serif"],

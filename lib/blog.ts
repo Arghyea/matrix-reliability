@@ -61,3 +61,14 @@ export function getAllPosts(): PostMeta[] {
     })
     .sort((a, b) => (a.date < b.date ? 1 : -1));
 }
+
+// Related posts: same category first, then most-recent others, excluding self.
+export function getRelatedPosts(slug: string, limit = 3): PostMeta[] {
+  const all = getAllPosts();
+  const current = all.find((p) => p.slug === slug);
+  const others = all.filter((p) => p.slug !== slug);
+  if (!current) return others.slice(0, limit);
+  const sameCat = others.filter((p) => p.category === current.category);
+  const rest = others.filter((p) => p.category !== current.category);
+  return [...sameCat, ...rest].slice(0, limit);
+}

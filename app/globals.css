@@ -44,6 +44,6 @@ body {
 .prose-mx ol { list-style: decimal; padding-left: 1.4rem; margin: 0 0 1.1rem; }
 .prose-mx li { margin: 0.3rem 0; }
 .prose-mx a { color: #00b85e; text-decoration: underline; font-weight: 600; }
-.prose-mx blockquote { border-left: 3px solid #02e375; padding-left: 1rem; color: #304838; font-style: italic; margin: 1.2rem 0; }
+.prose-mx blockquote { border-left: 3px solid #0fa45f; padding-left: 1rem; color: #304838; font-style: italic; margin: 1.2rem 0; }
 .prose-mx code { background: #f3f6f4; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; }
 .prose-mx strong { color: #00341B; }

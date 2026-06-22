@@ -6,10 +6,9 @@ export default function Footer() {
     <footer className="bg-deep text-g3">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-4">
         <div className="md:col-span-1">
-          <div className="mb-3 flex items-center gap-2 text-white">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent text-dark-green font-display text-lg font-extrabold">M</span>
-            <span className="font-display text-lg font-bold">Matrix<span className="text-accent">Forex</span></span>
-          </div>
+          <Link href="/" aria-label="Matrix Forex home" className="mb-3 inline-flex items-center">
+            <img src="/img/matrix-logo.png" alt="Matrix Forex" className="h-8 w-auto" />
+          </Link>
           <p className="text-[13px] leading-relaxed">{site.tagline}</p>
           <p className="mt-3 text-[12px] leading-relaxed text-g4">{site.rbiLine}</p>
         </div>

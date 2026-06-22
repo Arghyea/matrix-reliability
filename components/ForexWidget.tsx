@@ -207,7 +207,7 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="w-full appearance-none rounded-xl border-[1.5px] border-g2 bg-white pt-[22px] pb-1.5 pl-3 pr-7 text-[13px] font-bold text-ink outline-none focus:border-accent focus:ring-4 focus:ring-accent/15"
+              className="w-full appearance-none rounded-xl border border-g2 bg-white pt-[22px] pb-1.5 pl-3 pr-7 text-[13px] font-bold text-ink outline-none focus:border-accent focus:ring-4 focus:ring-accent/15"
             >
               <option value="" disabled>Select</option>
               {options.map((c) => (
@@ -222,12 +222,12 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
               type="number" min={0} inputMode="decimal" placeholder="0"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full rounded-xl border-[1.5px] border-g2 bg-white pt-[22px] pb-1.5 px-3 text-[13px] font-bold text-ink outline-none focus:border-accent focus:ring-4 focus:ring-accent/15"
+              className="w-full rounded-xl border border-g2 bg-white pt-[22px] pb-1.5 px-3 text-[13px] font-bold text-ink outline-none focus:border-accent focus:ring-4 focus:ring-accent/15"
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-between rounded-2xl border-[1.5px] border-accent/30 bg-mint px-3 py-2.5 mb-2">
+        <div className="flex items-center justify-between rounded-2xl border border-accent/30 bg-mint px-3 py-2.5 mb-2">
           <div>
             <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-g4 mb-0.5">
               {mode === "sell" ? "You receive (INR)" : "Total cost (INR)"}
@@ -269,24 +269,24 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
               <input
                 required placeholder="Full Name" autoComplete="name"
                 value={name} onChange={(e) => setName(e.target.value)}
-                className="rounded-full border-[1.5px] border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
+                className="rounded-full border border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
               />
               <input
                 required type="tel" inputMode="numeric" maxLength={10} placeholder="Mobile Number"
                 value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                className="rounded-full border-[1.5px] border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
+                className="rounded-full border border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
               />
               {mode !== "send" && (
                 <input
                   required placeholder="City" autoComplete="address-level2"
                   value={city} onChange={(e) => setCity(e.target.value)}
-                  className="rounded-full border-[1.5px] border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
+                  className="rounded-full border border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
                 />
               )}
               <input
                 required type="email" placeholder="Email Address" autoComplete="email"
                 value={email} onChange={(e) => setEmail(e.target.value)}
-                className={`rounded-full border-[1.5px] border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12 ${mode === "send" ? "sm:col-span-2" : "col-span-1"}`}
+                className={`rounded-full border border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12 ${mode === "send" ? "sm:col-span-2" : "col-span-1"}`}
               />
             </div>
 
@@ -300,7 +300,7 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
                         type="radio" name="service" className="peer hidden"
                         checked={service === s} onChange={() => setService(s)}
                       />
-                      <span className="flex items-center justify-center rounded-full border-[1.5px] border-accent bg-white px-1 py-2 text-center text-[11px] font-semibold text-dark-green transition peer-checked:bg-accent peer-checked:ring-2 peer-checked:ring-accent/30">
+                      <span className="flex items-center justify-center rounded-full border border-accent bg-white px-1 py-2 text-center text-[11px] font-semibold text-dark-green transition peer-checked:bg-accent peer-checked:ring-2 peer-checked:ring-accent/30">
                         {s}
                       </span>
                     </label>
