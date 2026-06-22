@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Never allow sideways scroll on mobile (clip keeps the sticky header working) */
+html, body { overflow-x: clip; max-width: 100%; }
+
+
 /* Self-host the brand display face (from the live theme) */
 @font-face {
   font-family: "Aeonik";

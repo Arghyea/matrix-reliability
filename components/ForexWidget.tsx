@@ -146,7 +146,7 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
   };
 
   return (
-    <div className="w-full max-w-[420px] rounded-xl2 bg-white shadow-card overflow-hidden">
+    <div className="w-full min-w-0 max-w-full sm:max-w-[420px] rounded-xl2 bg-white shadow-card overflow-hidden">
       {/* Live ticker */}
       <div className="flex items-center gap-2 bg-deep px-3 py-2 overflow-hidden">
         <span className="relative flex h-2.5 w-2.5 shrink-0">
@@ -202,12 +202,12 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
 
         {/* Calculator */}
         <div className="grid grid-cols-2 gap-2 mb-2">
-          <div className="relative">
+          <div className="relative min-w-0">
             <label className="absolute top-1.5 left-3 text-[9px] font-bold uppercase tracking-[0.15em] text-g3 pointer-events-none">Currency</label>
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="w-full appearance-none rounded-xl border border-g2 bg-white pt-[22px] pb-1.5 pl-3 pr-7 text-[13px] font-bold text-ink outline-none focus:border-accent focus:ring-4 focus:ring-accent/15"
+              className="w-full min-w-0 appearance-none rounded-xl border border-g2 bg-white pt-[22px] pb-1.5 pl-3 pr-7 text-[13px] font-bold text-ink outline-none focus:border-accent focus:ring-4 focus:ring-accent/15"
             >
               <option value="" disabled>Select</option>
               {options.map((c) => (
@@ -216,7 +216,7 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
             </select>
             <span className="pointer-events-none absolute right-2.5 top-[58%] -translate-y-1/2 text-g3">▾</span>
           </div>
-          <div className="relative">
+          <div className="relative min-w-0">
             <label className="absolute top-1.5 left-3 text-[9px] font-bold uppercase tracking-[0.15em] text-g3 pointer-events-none">Amount</label>
             <input
               type="number" min={0} inputMode="decimal" placeholder="0"

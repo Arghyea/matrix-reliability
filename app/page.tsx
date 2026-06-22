@@ -121,7 +121,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex justify-center md:justify-end">
+          <div className="flex w-full min-w-0 justify-center md:justify-end">
             <ForexWidget defaultTab="buy" />
           </div>
         </div>
@@ -217,19 +217,21 @@ export default function Home() {
           <h2 className="mt-2 font-display text-4xl font-extrabold text-ink">Matrix vs traditional dealers</h2>
           <p className="mt-3 text-[15px] leading-relaxed text-g5">See why thousands switch from banks, airports, and street changers to Matrix Forex every month.</p>
         </div>
-        <div className="overflow-hidden rounded-2xl border border-g2">
-          <div className="grid grid-cols-[1.2fr_1fr_1fr] bg-g1 text-[12px] font-bold uppercase tracking-wide text-g5">
-            <div className="px-4 py-3.5 sm:px-6"></div>
-            <div className="px-4 py-3.5 sm:px-6">Traditional / Airport</div>
-            <div className="bg-dark-green px-4 py-3.5 text-accent sm:px-6">Matrix Forex ✓</div>
-          </div>
-          {COMPARE.map(([label, trad, matrix], i) => (
-            <div key={label} className={`grid grid-cols-[1.2fr_1fr_1fr] text-[13.5px] ${i % 2 ? "bg-white" : "bg-g1/40"}`}>
-              <div className="px-4 py-3.5 font-semibold text-ink sm:px-6">{label}</div>
-              <div className="px-4 py-3.5 text-g5 sm:px-6">{trad}</div>
-              <div className="border-l border-g2 bg-mint/40 px-4 py-3.5 font-semibold text-dark-green sm:px-6">{matrix}</div>
+        <div className="-mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
+          <div className="min-w-[560px] overflow-hidden rounded-2xl border border-g2 sm:min-w-0">
+            <div className="grid grid-cols-[1.2fr_1fr_1fr] bg-g1 text-[12px] font-bold uppercase tracking-wide text-g5">
+              <div className="px-4 py-3.5 sm:px-6"></div>
+              <div className="px-4 py-3.5 sm:px-6">Traditional / Airport</div>
+              <div className="bg-dark-green px-4 py-3.5 text-accent sm:px-6">Matrix Forex ✓</div>
             </div>
-          ))}
+            {COMPARE.map(([label, trad, matrix], i) => (
+              <div key={label} className={`grid grid-cols-[1.2fr_1fr_1fr] text-[13.5px] ${i % 2 ? "bg-white" : "bg-g1/40"}`}>
+                <div className="px-4 py-3.5 font-semibold text-ink sm:px-6">{label}</div>
+                <div className="px-4 py-3.5 text-g5 sm:px-6">{trad}</div>
+                <div className="border-l border-g2 bg-mint/40 px-4 py-3.5 font-semibold text-dark-green sm:px-6">{matrix}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
