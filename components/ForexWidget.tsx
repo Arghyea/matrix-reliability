@@ -5,7 +5,7 @@ import {
   ALLOWED, CURRENCY_META, MIN_QTY, DEFAULT_MIN, PREFERRED,
   ratePrecision, tickerPrecision, type RateMap, type CurrencyCode,
 } from "@/lib/currencies";
-import { captureTracking, classifySource, type Tracking } from "@/lib/tracking";
+import { captureTracking, classifySource, type Tracking, pushLeadEvent } from "@/lib/tracking";
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
@@ -181,6 +181,7 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
       });
       const data = await res.json();
       if (res.ok && data.ok) {
+        pushLeadEvent(mode);
         setStatus("done");
       } else {
         setStatus("error");
@@ -331,17 +332,15 @@ export default function ForexWidget({ defaultTab = "buy" }: { defaultTab?: Mode 
                 value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                 className="rounded-full border border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
               />
-              {mode !== "send" && (
-                <input
-                  required placeholder="City" autoComplete="address-level2"
-                  value={city} onChange={(e) => setCity(e.target.value)}
-                  className="rounded-full border border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
-                />
-              )}
+              <input
+                required={mode !== "send"} placeholder="City" autoComplete="address-level2"
+                value={city} onChange={(e) => setCity(e.target.value)}
+                className="rounded-full border border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
+              />
               <input
                 required type="email" placeholder="Email Address" autoComplete="email"
                 value={email} onChange={(e) => setEmail(e.target.value)}
-                className={`rounded-full border border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12 ${mode === "send" ? "sm:col-span-2" : "col-span-1"}`}
+                className="rounded-full border border-g2 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-g3 focus:border-accent focus:ring-4 focus:ring-accent/12"
               />
             </div>
 

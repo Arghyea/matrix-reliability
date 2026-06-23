@@ -64,3 +64,20 @@ export function classifySource(t: Tracking): string {
     return "Referral: " + ref;
   return "Direct";
 }
+
+// ── Conversion signal ──
+// Fires ONE unified event on every successful lead, from ANY form
+// (homepage calculator, forex-card page, remittance page). Configure the
+// conversion ONCE in GTM/Google Ads on the `lead_submit` dataLayer event
+// (or the gtag `generate_lead` event) and it tracks every form. `lead_type`
+// lets you segment buy / sell / send / card conversions if you want.
+type LeadType = "buy" | "sell" | "send" | "card";
+export function pushLeadEvent(leadType: LeadType, extra: Record<string, unknown> = {}) {
+  if (typeof window === "undefined") return;
+  const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...a: unknown[]) => void };
+  w.dataLayer = w.dataLayer || [];
+  w.dataLayer.push({ event: "lead_submit", lead_type: leadType, ...extra });
+  if (typeof w.gtag === "function") {
+    w.gtag("event", "generate_lead", { lead_type: leadType, ...extra });
+  }
+}

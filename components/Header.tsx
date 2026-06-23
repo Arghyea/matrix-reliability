@@ -22,13 +22,13 @@ const SERVICES: Svc[] = [
   {
     label: "Send Money Abroad",
     desc: "Outward remittance for tuition, family & travel.",
-    href: "/services",
+    href: "/remittance",
     icon: <path d="M2 12h20M2 12l8-8M2 12l8 8" />,
   },
   {
     label: "Forex Card",
     desc: "Multi-currency travel card with zero markup.",
-    href: "/#card",
+    href: "/forex-card",
     icon: <path d="M2.5 6h19a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-19a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1ZM2 10h20" />,
   },
 ];

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { captureTracking, classifySource, type Tracking } from "@/lib/tracking";
+import { captureTracking, classifySource, pushLeadEvent, type Tracking } from "@/lib/tracking";
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
@@ -104,6 +104,7 @@ export default function ForexCard() {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
+        pushLeadEvent("card", { city });
         setStatus("done");
       } else {
         setStatus("error");
