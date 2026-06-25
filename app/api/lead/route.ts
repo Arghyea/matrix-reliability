@@ -195,7 +195,7 @@ function htmlBody(d: z.infer<typeof LeadSchema>): string {
           <div style="color:rgba(255,255,255,.6);font-size:12px;margin-top:4px;">${esc(submitted)} IST</div>
         </td></tr>
 
-        <tr><td style="padding:24px 26px 6px;">
+        <tr><td style="padding:24px 26px 22px;">
           ${eyebrow("Lead")}
           <div style="color:${INK};font-size:24px;font-weight:800;line-height:1.2;">${esc(d.name)}</div>
           <table role="presentation" width="100%" style="margin-top:10px;">
@@ -203,11 +203,6 @@ function htmlBody(d: z.infer<typeof LeadSchema>): string {
             ${row("Email", `<a href="mailto:${esc(d.email)}" style="color:${DARK};text-decoration:none;">${esc(d.email)}</a>`)}
             ${row("City", esc(d.city) || `<span style="color:${MUTED};">—</span>`)}
           </table>
-          <table role="presentation" style="margin:16px 0 6px;"><tr>
-            <td style="padding-right:8px;"><a href="tel:+91${esc(phone)}" style="display:inline-block;background:${ACCENT};color:${DARK};font-weight:700;font-size:13px;text-decoration:none;padding:9px 18px;border-radius:999px;">Call</a></td>
-            <td style="padding-right:8px;"><a href="https://wa.me/91${esc(phone)}" style="display:inline-block;background:#ffffff;border:1px solid ${BORDER};color:${INK};font-weight:700;font-size:13px;text-decoration:none;padding:9px 18px;border-radius:999px;">WhatsApp</a></td>
-            <td><a href="mailto:${esc(d.email)}" style="display:inline-block;background:#ffffff;border:1px solid ${BORDER};color:${INK};font-weight:700;font-size:13px;text-decoration:none;padding:9px 18px;border-radius:999px;">Email</a></td>
-          </tr></table>
         </td></tr>
 
         <tr><td style="padding:0 26px;"><div style="height:1px;background:${BORDER};"></div></td></tr>
