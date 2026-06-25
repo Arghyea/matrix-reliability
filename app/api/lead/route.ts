@@ -72,9 +72,9 @@ const LeadSchema = z.object({
 });
 
 const FORM_LABEL: Record<string, string> = {
-  buy: "Book Forex Lead",
+  buy: "Buy Forex Lead",
   sell: "Sell Forex Lead",
-  send: "Send Money Lead",
+  send: "Remittance Lead",
   card: "Forex Card Lead",
 };
 
@@ -134,11 +134,15 @@ function esc(s: unknown): string {
 // Person & quick actions on top, the deal in the middle, Google/attribution
 // (with the campaign ID isolated) at the bottom.
 function htmlBody(d: z.infer<typeof LeadSchema>): string {
-  const DARK = "#00341B", INK = "#0e1a11", MUTED = "#6a7c70", BORDER = "#e4ebe6", PANEL = "#f7faf8", LEAF = "#0c7d46", ACCENT = "#02e375";
+  const DARK = "#0f172a", INK = "#1e293b", MUTED = "#64748b", BORDER = "#e2e8f0", PANEL = "#f8fafc", LEAF = "#2563eb", ACCENT = "#2563eb", ACCENT_DK = "#1d4ed8", CAMP_BG = "#eff6ff", CAMP_BORDER = "#bfdbfe", HEAD_EYE = "#93c5fd";
+  const TYPE: Record<string, string> = { buy: "Buy Forex", sell: "Sell Forex", send: "Remittance", card: "Forex Card" };
+  const typeLabel = TYPE[d.formType] || "Lead";
   const label = FORM_LABEL[d.formType] || "New Lead";
   const submitted = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" });
   const t = d.tracking || {};
   const phone = (d.phone || "").replace(/\D/g, "");
+  // Remittance purpose isn't reliable, so show the service simply as "Remittance".
+  const svc = d.service && /^Remittance\b/i.test(d.service) ? "Remittance" : d.service;
 
   const row = (lbl: string, valHtml: string, o: { strong?: boolean; mono?: boolean } = {}) =>
     valHtml ? `<tr>
@@ -149,20 +153,20 @@ function htmlBody(d: z.infer<typeof LeadSchema>): string {
   const eyebrow = (txt: string) => `<div style="color:${LEAF};font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;margin-bottom:8px;">${esc(txt)}</div>`;
 
   const reqRows = [
-    row("Service", esc(d.service)),
+    row("Service", esc(svc)),
     row("Currency", esc(d.currency)),
     row("Amount", d.amount ? esc(`${d.amount} ${d.currency}`.trim()) : ""),
     row("Rate", d.rate ? esc(`₹${d.rate} / ${d.currency}`.trim()) : ""),
     row("Total (INR)", d.total ? `<span style="color:${DARK};">₹${esc(d.total)}</span>` : "", { strong: true }),
-  ].join("") || row("Service", esc(d.service) || "—");
+  ].join("") || row("Service", esc(svc) || "—");
 
   const campaignId = t.gad_campaignid || "";
   const campaignName = t.utm_campaign || "";
   const campaignBlock = (campaignId || campaignName) ? `
     <table role="presentation" width="100%" style="margin:6px 0 14px;"><tr>
-      <td style="background:#eafff3;border:1px solid ${ACCENT};border-radius:10px;padding:14px 16px;">
+      <td style="background:${CAMP_BG};border:1px solid ${CAMP_BORDER};border-radius:10px;padding:14px 16px;">
         <div style="color:${MUTED};font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;">${campaignId ? "Google Ads Campaign ID" : "Campaign"}</div>
-        ${campaignId ? `<div style="margin-top:3px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:22px;font-weight:800;"><a href="https://ads.google.com/aw/campaigns?campaignId=${esc(campaignId)}" style="color:${DARK};text-decoration:none;">${esc(campaignId)}</a></div>` : ""}
+        ${campaignId ? `<div style="margin-top:3px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:22px;font-weight:800;"><a href="https://ads.google.com/aw/campaigns?campaignId=${esc(campaignId)}" style="color:${ACCENT_DK};text-decoration:none;">${esc(campaignId)}</a></div>` : ""}
         ${campaignName ? `<div style="color:${INK};font-size:14px;font-weight:600;margin-top:${campaignId ? "4" : "3"}px;">${esc(campaignName)}</div>` : ""}
       </td></tr></table>` : "";
 
@@ -180,17 +184,30 @@ function htmlBody(d: z.infer<typeof LeadSchema>): string {
     row("UTM content", esc(t.utm_content || "")),
   ].join("");
   const pageRows = [
-    row("Referrer", t.referrer ? `<a href="${esc(t.referrer)}" style="color:${DARK};">${esc(t.referrer)}</a>` : ""),
+    row("Referrer", t.referrer ? `<a href="${esc(t.referrer)}" style="color:${ACCENT};">${esc(t.referrer)}</a>` : ""),
     row("Landing page", esc(t.landing_path || "")),
     row("Full URL", t.landing_url ? `<a href="${esc(t.landing_url)}" style="color:${MUTED};">${esc(t.landing_url)}</a>` : "", { mono: true }),
   ].join("");
 
-  return `<!doctype html><html><body style="margin:0;background:#f3f5f4;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f5f4;padding:24px 12px;">
+  // Branch summary — drag-select to copy and paste into the branch email. No rates here.
+  const fwdRows: Array<[string, string]> = [
+    ["Name", d.name],
+    ["Phone", `+91 ${phone}`],
+    ["Email", d.email],
+    ["City", d.city || "—"],
+  ];
+  if (d.amount) fwdRows.push(["Amount", `${d.amount} ${d.currency}`.trim()]);
+  if (svc) fwdRows.push(["Service", svc]);
+  const fwdHtml =
+    `<div style="font-weight:800;color:${INK};font-size:15px;margin-bottom:10px;">${esc(typeLabel)}</div>` +
+    `<table role="presentation" cellpadding="0" cellspacing="0">${fwdRows.map(([k, v]) => `<tr><td style="color:${MUTED};font-size:14px;padding:3px 14px 3px 0;vertical-align:top;white-space:nowrap;">${esc(k)}</td><td style="color:${INK};font-size:14px;font-weight:700;padding:3px 0;vertical-align:top;">${esc(v)}</td></tr>`).join("")}</table>`;
+
+  return `<!doctype html><html><body style="margin:0;background:#eef1f5;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f5;padding:24px 12px;">
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid ${BORDER};border-radius:14px;overflow:hidden;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
         <tr><td style="background:${DARK};padding:22px 26px;">
-          <div style="color:${ACCENT};font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;">Matrix Forex</div>
+          <div style="color:${HEAD_EYE};font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;">Matrix Forex</div>
           <div style="color:#ffffff;font-size:21px;font-weight:800;margin-top:6px;">New ${esc(label)}</div>
           <div style="color:rgba(255,255,255,.6);font-size:12px;margin-top:4px;">${esc(submitted)} IST</div>
         </td></tr>
@@ -199,8 +216,8 @@ function htmlBody(d: z.infer<typeof LeadSchema>): string {
           ${eyebrow("Lead")}
           <div style="color:${INK};font-size:24px;font-weight:800;line-height:1.2;">${esc(d.name)}</div>
           <table role="presentation" width="100%" style="margin-top:10px;">
-            ${row("Phone", `<a href="tel:+91${esc(phone)}" style="color:${DARK};font-weight:700;text-decoration:none;">+91 ${esc(phone)}</a>`)}
-            ${row("Email", `<a href="mailto:${esc(d.email)}" style="color:${DARK};text-decoration:none;">${esc(d.email)}</a>`)}
+            ${row("Phone", `<a href="tel:+91${esc(phone)}" style="color:${ACCENT};font-weight:700;text-decoration:none;">+91 ${esc(phone)}</a>`)}
+            ${row("Email", `<a href="mailto:${esc(d.email)}" style="color:${ACCENT};text-decoration:none;">${esc(d.email)}</a>`)}
             ${row("City", esc(d.city) || `<span style="color:${MUTED};">—</span>`)}
           </table>
         </td></tr>
@@ -210,6 +227,11 @@ function htmlBody(d: z.infer<typeof LeadSchema>): string {
         <tr><td style="padding:18px 26px;">
           ${eyebrow("Requirement")}
           <table role="presentation" width="100%">${reqRows}</table>
+        </td></tr>
+
+        <tr><td style="padding:6px 26px 20px;">
+          ${eyebrow("Summary")}
+          <div style="border:1px solid ${BORDER};border-radius:10px;background:${PANEL};padding:16px 18px;">${fwdHtml}</div>
         </td></tr>
 
         <tr><td style="background:${PANEL};padding:20px 26px;border-top:1px solid ${BORDER};">

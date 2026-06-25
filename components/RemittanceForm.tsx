@@ -165,7 +165,7 @@ export default function RemittanceForm() {
 
         {siteKey && <div ref={turnstileRef} className="sm:col-span-2" />}
 
-        <button onClick={submit} disabled={status === "sending"} className="rounded-2xl bg-leaf py-4 text-[14px] font-extrabold uppercase tracking-wide text-white shadow-[0_10px_30px_-10px_rgba(15,164,95,.6)] transition hover:-translate-y-0.5 hover:bg-leaf-dark disabled:opacity-60 sm:col-span-2">
+        <button onClick={submit} disabled={status === "sending"} className="rounded-2xl bg-accent py-4 text-[14px] font-extrabold uppercase tracking-wide text-dark-green shadow-glow transition hover:-translate-y-0.5 disabled:opacity-60 sm:col-span-2">
           {status === "sending" ? "Submitting…" : "Get my live quote →"}
         </button>
         <p className="text-center text-[12px] text-ink/45 sm:col-span-2">🔒 RBI-authorised · KYC-guided · No spam calls</p>

@@ -116,7 +116,7 @@ export default function RemittancePage() {
             <p className="mt-3 text-[15px] leading-relaxed text-g5">
               The biggest reason Indian families remit overseas. We send tuition straight to the university, plus living expenses to your child — at live rates, with the lowest TCS of any category. If your fees are funded by a Section-80E education loan, that TCS is <strong className="text-ink">zero</strong>.
             </p>
-            <Link href="#start" className="mt-5 inline-block rounded-full bg-leaf px-6 py-3 text-[14px] font-bold text-white transition hover:-translate-y-0.5 hover:bg-leaf-dark">Pay fees abroad →</Link>
+            <Link href="#start" className="mt-5 inline-block rounded-full bg-accent px-6 py-3 text-[14px] font-bold text-dark-green shadow-glow transition hover:-translate-y-0.5">Pay fees abroad →</Link>
           </div>
         </div>
 
