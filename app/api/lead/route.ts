@@ -75,6 +75,7 @@ const FORM_LABEL: Record<string, string> = {
   buy: "Book Forex Lead",
   sell: "Sell Forex Lead",
   send: "Send Money Lead",
+  card: "Forex Card Lead",
 };
 
 async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
@@ -114,12 +115,124 @@ function plainTextBody(d: z.infer<typeof LeadSchema>): string {
   L.push("");
   L.push("── TRAFFIC SOURCE ───────────");
   L.push(`Source    : ${d.source}`);
+  if (d.tracking?.gad_campaignid) L.push(`Campaign  : ${d.tracking.gad_campaignid}`);
   for (const [k, v] of Object.entries(d.tracking || {})) {
     if (v) L.push(`${k.padEnd(10)}: ${v}`);
   }
   L.push("");
   L.push("═══════════════════════════════");
   return L.join("\n");
+}
+
+function esc(s: unknown): string {
+  return String(s ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+// Branded, email-client-safe HTML (table layout + inline styles only).
+// Person & quick actions on top, the deal in the middle, Google/attribution
+// (with the campaign ID isolated) at the bottom.
+function htmlBody(d: z.infer<typeof LeadSchema>): string {
+  const DARK = "#00341B", INK = "#0e1a11", MUTED = "#6a7c70", BORDER = "#e4ebe6", PANEL = "#f7faf8", LEAF = "#0c7d46", ACCENT = "#02e375";
+  const label = FORM_LABEL[d.formType] || "New Lead";
+  const submitted = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" });
+  const t = d.tracking || {};
+  const phone = (d.phone || "").replace(/\D/g, "");
+
+  const row = (lbl: string, valHtml: string, o: { strong?: boolean; mono?: boolean } = {}) =>
+    valHtml ? `<tr>
+      <td style="padding:7px 0;color:${MUTED};font-size:13px;width:120px;vertical-align:top;">${esc(lbl)}</td>
+      <td style="padding:7px 0;color:${INK};font-size:${o.strong ? "16px" : "14px"};font-weight:${o.strong ? 700 : 500};${o.mono ? "font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;word-break:break-all;" : ""};vertical-align:top;">${valHtml}</td>
+    </tr>` : "";
+
+  const eyebrow = (txt: string) => `<div style="color:${LEAF};font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;margin-bottom:8px;">${esc(txt)}</div>`;
+
+  const reqRows = [
+    row("Service", esc(d.service)),
+    row("Currency", esc(d.currency)),
+    row("Amount", d.amount ? esc(`${d.amount} ${d.currency}`.trim()) : ""),
+    row("Rate", d.rate ? esc(`₹${d.rate} / ${d.currency}`.trim()) : ""),
+    row("Total (INR)", d.total ? `<span style="color:${DARK};">₹${esc(d.total)}</span>` : "", { strong: true }),
+  ].join("") || row("Service", esc(d.service) || "—");
+
+  const campaignId = t.gad_campaignid || "";
+  const campaignName = t.utm_campaign || "";
+  const campaignBlock = (campaignId || campaignName) ? `
+    <table role="presentation" width="100%" style="margin:6px 0 14px;"><tr>
+      <td style="background:#eafff3;border:1px solid ${ACCENT};border-radius:10px;padding:14px 16px;">
+        <div style="color:${MUTED};font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;">${campaignId ? "Google Ads Campaign ID" : "Campaign"}</div>
+        ${campaignId ? `<div style="margin-top:3px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:22px;font-weight:800;"><a href="https://ads.google.com/aw/campaigns?campaignId=${esc(campaignId)}" style="color:${DARK};text-decoration:none;">${esc(campaignId)}</a></div>` : ""}
+        ${campaignName ? `<div style="color:${INK};font-size:14px;font-weight:600;margin-top:${campaignId ? "4" : "3"}px;">${esc(campaignName)}</div>` : ""}
+      </td></tr></table>` : "";
+
+  const clickRows = [
+    row("GCLID", esc(t.gclid || ""), { mono: true }),
+    row("GBRAID", esc(t.gbraid || ""), { mono: true }),
+    row("WBRAID", esc(t.wbraid || ""), { mono: true }),
+    row("Meta ID", esc(t.fbclid || ""), { mono: true }),
+    row("Bing ID", esc(t.msclkid || ""), { mono: true }),
+  ].join("");
+  const utmRows = [
+    row("UTM source", esc(t.utm_source || "")),
+    row("UTM medium", esc(t.utm_medium || "")),
+    row("UTM term", esc(t.utm_term || "")),
+    row("UTM content", esc(t.utm_content || "")),
+  ].join("");
+  const pageRows = [
+    row("Referrer", t.referrer ? `<a href="${esc(t.referrer)}" style="color:${DARK};">${esc(t.referrer)}</a>` : ""),
+    row("Landing page", esc(t.landing_path || "")),
+    row("Full URL", t.landing_url ? `<a href="${esc(t.landing_url)}" style="color:${MUTED};">${esc(t.landing_url)}</a>` : "", { mono: true }),
+  ].join("");
+
+  return `<!doctype html><html><body style="margin:0;background:#f3f5f4;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f5f4;padding:24px 12px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid ${BORDER};border-radius:14px;overflow:hidden;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+        <tr><td style="background:${DARK};padding:22px 26px;">
+          <div style="color:${ACCENT};font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;">Matrix Forex</div>
+          <div style="color:#ffffff;font-size:21px;font-weight:800;margin-top:6px;">New ${esc(label)}</div>
+          <div style="color:rgba(255,255,255,.6);font-size:12px;margin-top:4px;">${esc(submitted)} IST</div>
+        </td></tr>
+
+        <tr><td style="padding:24px 26px 6px;">
+          ${eyebrow("Lead")}
+          <div style="color:${INK};font-size:24px;font-weight:800;line-height:1.2;">${esc(d.name)}</div>
+          <table role="presentation" width="100%" style="margin-top:10px;">
+            ${row("Phone", `<a href="tel:+91${esc(phone)}" style="color:${DARK};font-weight:700;text-decoration:none;">+91 ${esc(phone)}</a>`)}
+            ${row("Email", `<a href="mailto:${esc(d.email)}" style="color:${DARK};text-decoration:none;">${esc(d.email)}</a>`)}
+            ${row("City", esc(d.city) || `<span style="color:${MUTED};">—</span>`)}
+          </table>
+          <table role="presentation" style="margin:16px 0 6px;"><tr>
+            <td style="padding-right:8px;"><a href="tel:+91${esc(phone)}" style="display:inline-block;background:${ACCENT};color:${DARK};font-weight:700;font-size:13px;text-decoration:none;padding:9px 18px;border-radius:999px;">Call</a></td>
+            <td style="padding-right:8px;"><a href="https://wa.me/91${esc(phone)}" style="display:inline-block;background:#ffffff;border:1px solid ${BORDER};color:${INK};font-weight:700;font-size:13px;text-decoration:none;padding:9px 18px;border-radius:999px;">WhatsApp</a></td>
+            <td><a href="mailto:${esc(d.email)}" style="display:inline-block;background:#ffffff;border:1px solid ${BORDER};color:${INK};font-weight:700;font-size:13px;text-decoration:none;padding:9px 18px;border-radius:999px;">Email</a></td>
+          </tr></table>
+        </td></tr>
+
+        <tr><td style="padding:0 26px;"><div style="height:1px;background:${BORDER};"></div></td></tr>
+
+        <tr><td style="padding:18px 26px;">
+          ${eyebrow("Requirement")}
+          <table role="presentation" width="100%">${reqRows}</table>
+        </td></tr>
+
+        <tr><td style="background:${PANEL};padding:20px 26px;border-top:1px solid ${BORDER};">
+          ${eyebrow("Where this lead came from")}
+          <table role="presentation" width="100%">${row("Source", `<strong style="color:${INK};">${esc(d.source)}</strong>`)}</table>
+          ${campaignBlock}
+          ${clickRows ? `<table role="presentation" width="100%">${clickRows}</table>` : ""}
+          ${utmRows ? `<table role="presentation" width="100%" style="margin-top:2px;">${utmRows}</table>` : ""}
+          ${pageRows ? `<table role="presentation" width="100%" style="margin-top:2px;">${pageRows}</table>` : ""}
+        </td></tr>
+
+        <tr><td style="background:${DARK};padding:16px 26px;">
+          <div style="color:rgba(255,255,255,.55);font-size:11px;">Automated lead notification · matrixforex.in</div>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  </body></html>`;
 }
 
 export async function POST(req: Request) {
@@ -178,12 +291,15 @@ export async function POST(req: Request) {
 
   try {
     const resend = new Resend(apiKey);
+    const subjName = d.name.replace(/[\r\n]+/g, " ").trim();
+    const subjCity = (d.city || "—").replace(/[\r\n]+/g, " ").trim();
     await resend.emails.send({
       from,
       to,
       replyTo: d.email,
-      subject: `New ${FORM_LABEL[d.formType]} — ${d.name} (${d.city || "—"})`,
+      subject: `New ${FORM_LABEL[d.formType] || "Lead"} — ${subjName} (${subjCity})`,
       text: plainTextBody(d),
+      html: htmlBody(d),
     });
     return NextResponse.json({ ok: true });
   } catch (e) {

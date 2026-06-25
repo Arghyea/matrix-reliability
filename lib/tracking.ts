@@ -7,7 +7,8 @@
 export type Tracking = Record<string, string>;
 
 const KEYS = [
-  "gclid", "gbraid", "wbraid", "fbclid",
+  "gclid", "gbraid", "wbraid", "fbclid", "msclkid",
+  "gad_campaignid", "gad_source",
   "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
 ];
 
@@ -37,6 +38,19 @@ export function captureTracking(): Tracking {
   } catch {
     t.referrer = document.referrer || "";
   }
+  try {
+    let landing = sessionStorage.getItem("mx_landing_url");
+    if (!landing) {
+      landing = window.location.href;
+      sessionStorage.setItem("mx_landing_url", landing);
+    }
+    if (landing) {
+      t.landing_url = landing;
+      try { t.landing_path = new URL(landing).pathname; } catch {}
+    }
+  } catch {
+    t.landing_url = window.location.href;
+  }
   return t;
 }
 
@@ -45,6 +59,8 @@ export function classifySource(t: Tracking): string {
   if (t.gbraid) return "Google Ads (iOS app)";
   if (t.wbraid) return "Google Ads (Android app)";
   if (t.fbclid) return "Meta Ads";
+  if (t.gad_campaignid || t.gad_source) return "Google Ads";
+  if (t.msclkid) return "Microsoft Ads";
   if (t.utm_source) {
     const s = (t.utm_source || "").toLowerCase();
     const m = (t.utm_medium || "").toLowerCase();
